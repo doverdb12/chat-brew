@@ -5,6 +5,13 @@ import UserInput from './Components/UserInput.js';
 import io from 'socket.io-client';
 import './App.css';
 
+const socket = io("http://localhost:4000");
+
+const commandRegex = {
+  create: /^create [\S]+$/,
+  join: /^join [\S]+$/
+}
+
 class App extends Component {
   constructor() {
     super();
@@ -12,38 +19,39 @@ class App extends Component {
     this.state = {
       currentRoom: null,
       messageList: [],
-      rooms: [],
-      socket: null
+      rooms: []
     }
-
-    this.buildHelpMessage = this.buildHelpMessage.bind(this);
-    this.detectKeywordsAndRespond = this.detectKeywordsAndRespond.bind(this);
   }
 
   componentDidMount() {
 
+    socket.on('connect', () => socket.emit('get_rooms'));
+
+    socket.on('share_rooms', (data) => {
+      this.setState({
+        rooms: this.state.rooms.concat(data.rooms) //need to watch out for dups here maybe?
+      });
+    });
   }
 
-  buildHelpMessage() {
-    return "help | join <room> | create <room> | exit <room> | list-rooms"
-  }
+  buildHelpMessage = () =>`help | join <room> | create <room> | exit <room> | list-rooms`
 
-  detectKeywordsAndRespond(input) {
-    switch(input) {
-      case "help":
-        this.setState({
-          messageList: this.state.messageList.concat(this.buildHelpMessage())
-        });
-        break;
-      default:
-        break;
+  detectKeywordsAndRespond = (input) => {
+    if(input === "help") {
+      this.setState({messageList: this.state.messageList.concat(this.buildHelpMessage())});
+    } else if(commandRegex.create.test(input)) {
+      let createdRoom = input.substring(7);
+      this.setState({
+        currentRoom: createdRoom,
+        rooms: this.state.rooms.concat(createdRoom)
+      }, () => socket.emit('create_room', {room: this.state.currentRoom}));
+    } else if(input === "list-rooms") {
+      console.log(this.state.rooms);
     }
   }
 
-  handleUserInput(input) {
-    this.setState({
-      messageList: this.state.messageList.concat(input)
-    }, () => this.detectKeywordsAndRespond(input));
+  handleUserInput = (input) => {
+    this.setState({messageList: this.state.messageList.concat(input)}, () => this.detectKeywordsAndRespond(input));
   }
 
   render() {
