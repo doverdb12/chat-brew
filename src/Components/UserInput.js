@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 class UserInput extends Component {
-  constructor() {
+  constructor(props) {
     super();
 
     this.state = {
@@ -24,7 +24,7 @@ class UserInput extends Component {
     return (
       <div className="UserInput">
         <li>
-          <label> =>
+          <label> =>{`${this.props.currentRoom ? "(" + this.props.currentRoom + ")" : ""}`}
             <input
               autoFocus
               onChange={(e) => this.handleChange(e)}
