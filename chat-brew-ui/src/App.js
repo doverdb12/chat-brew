@@ -110,7 +110,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <TimedMessage messageToDisplay="Welcome to chat-brew! Type 'help' for a list of commands." updateRate={50} />
+        <TimedMessage messageToDisplay="Welcome to chat-brew! Type 'help' for a list of available commands." updateRate={50} />
         <MessageHistory messageList={this.state.messageList}/>
         <UserInput currentRoom={this.state.currentRoom} onEnter={(input) => this.handleUserInput(input)}/>
       </div>
