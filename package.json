@@ -1,19 +1,32 @@
 {
   "name": "chat-brew-client",
-  "version": "0.1.0",
-  "private": true,
-  "devDependencies": {
-    "react-scripts": "1.0.7"
-  },
-  "dependencies": {
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
-    "socket.io-client": "^1.7.3"
+  "version": "1.0.0",
+  "description": "",
+  "engines": {
+    "node": "6.9.x"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  }
+    "start": "node server",
+    "heroku-postbuild": "cd chat-brew-ui/ && npm install --only=dev && npm install && npm run build"
+  },
+  "cacheDirectories": [
+    "node_modules",
+    "chat-brew-ui/node_modules"
+  ],
+  "dependencies": {
+    "express": "^4.14.1",
+    "socket.io": "^2.0.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/doverdb/chat-brew-client.git"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "create-react-app",
+    "react"
+  ],
+  "license": "MIT",
+  "devDependencies": {}
 }
