@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/chat-brew-ui/node_modules
 
 # testing
 /coverage
