@@ -3,5 +3,5 @@
 
 #### Planned Improvements
 * Refactor App.js to better modularize logic
-* Ensure that scrollbar goes to bottom of page automatically
+* Ensure that scrollbar goes to bottom of page automatically when needed
 * Enable nickname creation
