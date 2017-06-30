@@ -63,7 +63,7 @@ class App extends Component {
       this.setState({messageList: this.state.messageList.concat(this.buildListRoomsMessage())});
 
     } else if(CommandRegex.create.test(input)) {
-      var createdRoom = input.substring(7);
+      let createdRoom = input.substring(7);
 
       if(this.state.currentRoom) {
         createdRoom = null;
@@ -73,11 +73,17 @@ class App extends Component {
       this.setState({messageList: this.state.messageList.concat(this.buildCreateRoomMessage(createdRoom))});
 
     } else if(CommandRegex.exit.test(input)) {
-      socket.emit('exit_room', {room: this.state.currentRoom});
-      this.setState({currentRoom: null});
+      let roomToExit = input.substring(5);
+
+      if(this.state.currentRoom === roomToExit) {
+        socket.emit('exit_room', {room: roomToExit});
+        this.setState({currentRoom: null});
+      } else {
+        this.setState({messageList: this.state.messageList.concat(`You cannot exit a room you are not currently in!`)});
+      }
 
     } else if(CommandRegex.join.test(input)) {
-      var roomToJoin = input.substring(5);
+      let roomToJoin = input.substring(5);
 
       if(this.state.currentRoom) {
         roomToJoin = null;

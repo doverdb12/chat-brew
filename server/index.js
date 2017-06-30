@@ -5,22 +5,9 @@ const app = express();
 // Priority serve any static files.
 app.use(express.static(path.resolve(__dirname, '../chat-brew-ui/build')));
 
-// Answer API requests.
-app.get('/api', function (req, res) {
-  res.set('Content-Type', 'application/json');
-  res.send('{"message":"Hello from the custom server!"}');
-});
-
-// All remaining requests return the React app, so it can handle routing.
-app.get('*', function(request, response) {
-  response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
-});
-
-const port = process.env.PORT || 5000;
-console.log(port);
-
-const server = app.listen(port, function () {
-  console.log(`chat-brew-server listening on port ${port}.`)
+const PORT = process.env.PORT || 5000;
+const server = app.listen(PORT, function () {
+  console.log(`chat-brew-server listening on port ${PORT}.`)
 });
 
 const io = require('socket.io')(server);
@@ -39,10 +26,10 @@ io.on('connection', function (socket) {
   socket.on('disconnecting', function() {
     let currentRooms = io.nsps['/'].adapter.rooms;
 
-    Object.keys(currentRooms).forEach((key) => {
-      /*delete the room if nobody if all connections close*/
-      if(rooms.includes(key) && currentRooms[key].length <= 1) {
-        rooms.splice(rooms.indexOf(key), 1);
+    Object.keys(currentRooms).forEach((room) => {
+      if(rooms.includes(room) && currentRooms[room].length === 1
+         && io.sockets.adapter.sids[socket.id][room]) {
+        rooms.splice(rooms.indexOf(room), 1);
       }
     });
 
@@ -51,11 +38,15 @@ io.on('connection', function (socket) {
 
 
   socket.on('exit_room', function(data) {
-    /*Close room if any participant leaves*/
-    socket.leave(data.room, function () {
-      rooms.splice(rooms.indexOf(data.room), 1);
-      io.emit('share_rooms', {rooms: rooms});
-    });
+    let currentRooms = io.nsps['/'].adapter.rooms;
+
+    if(rooms.includes(data.room) && currentRooms[data.room].length === 1
+         && io.sockets.adapter.sids[socket.id][data.room]) {
+      socket.leave(data.room, function () {
+        rooms.splice(rooms.indexOf(data.room), 1);
+        io.emit('share_rooms', {rooms: rooms});
+      });
+    }
   });
 
   socket.on('get_rooms', function() {
