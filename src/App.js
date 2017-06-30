@@ -6,7 +6,7 @@ import CommandRegex from './Utils/CommandRegex.js';
 import io from 'socket.io-client';
 import './App.css';
 
-const socket = io("http://localhost:4000");
+const socket = io();
 
 class App extends Component {
   constructor() {
