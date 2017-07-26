@@ -112,7 +112,11 @@ class App extends Component {
       <div className="App">
         <TimedMessage messageToDisplay="Welcome to chat-brew! Type 'help' for a list of available commands." updateRate={50} />
         <MessageHistory messageList={this.state.messageList}/>
-        <UserInput currentRoom={this.state.currentRoom} onEnter={(input) => this.handleUserInput(input)}/>
+        <UserInput
+          autoFocus
+          currentRoom={this.state.currentRoom}
+          onEnter={(input) => this.handleUserInput(input)}
+          />
       </div>
     );
   }

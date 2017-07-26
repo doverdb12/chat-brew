@@ -40,13 +40,13 @@ io.on('connection', function (socket) {
   socket.on('exit_room', function(data) {
     let currentRooms = io.nsps['/'].adapter.rooms;
 
-    if(rooms.includes(data.room) && currentRooms[data.room].length === 1
-         && io.sockets.adapter.sids[socket.id][data.room]) {
-      socket.leave(currentRooms[data.room], function () {
+    socket.leave(data.room, () => {
+      if(currentRooms[data.room] === undefined) {
         rooms.splice(rooms.indexOf(data.room), 1);
         io.emit('share_rooms', {rooms: rooms});
-      });
-    }
+      }
+    });
+
   });
 
   socket.on('get_rooms', function() {
